@@ -5,8 +5,6 @@ param(
     [switch] $InstallGCC    = $false
 )
 
-#Push-Location ..
-$CurrentPath = (Get-Location).Path
 
 $CurrentPythonVersion = "3.9.1"
 $CurrentGitVersion    = "v2.29.2.windows.3/Git-2.29.2.3"
@@ -14,11 +12,14 @@ $CurrentMinGWVersion  = "8.1.0"
 $CurrentMinGWRevision = "rt_v6-rev0"
 $MinGWThreadType      = "win32" # "posix"
 
+
 function Install-VSCode {
+    Push-Location ..
     $VSInstallerURL  = "https://code.visualstudio.com/sha/download?build=stable&os="
     $VSInstallerURL += $(if ([Environment]::Is64BitOperatingSystem) { "win32-x64-user" } else { "win32-user" })    
-    $VSInstallerTempFile = "$CurrentPath\VSCodeInstall.exe"
-    $VSInstallerArgs = "/VERYSILENT /SP- /ALLUSERS /NOCANCEL /NORESTART /MERGETASKS=""!runcode,desktopicon,addtopath"" /DIR=""$CurrentPath\..\VSCode"""
+    $VSInstallerTempFile = "VSCodeInstall.exe"
+    $VSInstallerArgs = "/VERYSILENT /SP- /ALLUSERS /NOCANCEL /NORESTART /MERGETASKS=""!runcode,desktopicon,addtopath"" /DIR=""$((Get-Location).Path)\VSCode"""
+    Pop-Location
 
     try {
         Write-Output "Downloading VS Code installer..."
@@ -34,10 +35,12 @@ function Install-VSCode {
 }
 
 function Install-Python {
+    Push-Location ..
     $PythonInstallerURL   = "https://www.python.org/ftp/python/$CurrentPythonVersion/python-$CurrentPythonVersion"
     $PythonInstallerURL  += $(if ([Environment]::Is64BitOperatingSystem) { "-amd64.exe" } else { ".exe" })
     $PythonInstallerTempFile = "python-$CurrentPythonVersion.exe"
-    $PythonInstallerArgs  = "/quiet TargetDir=""$CurrentPath\..\Python"" InstallAllUsers=1 PrependPath=1 Include_doc=0 Include_test=0"
+    $PythonInstallerArgs  = "/quiet TargetDir=""$((Get-Location).Path)\Python"" InstallAllUsers=1 PrependPath=1 Include_doc=0 Include_test=0"
+    Pop-Location
 
     try {
         Write-Output "Downloading Python installer..."
@@ -72,7 +75,7 @@ function Install-GCC {
         Write-Output "Updating PATH..."
         $path = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
         Push-Location ..
-        [Environment]::SetEnvironmentVariable("PATH", "$path;$($(Get-Location).Path)\mingw64\bin", [EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable("PATH", "$path;$((Get-Location).Path)\mingw64\bin", [EnvironmentVariableTarget]::Machine)
         Pop-Location
         Write-Output "Cleaning up..."
         Remove-Item $GCCInstallerTempFile
@@ -83,10 +86,12 @@ function Install-GCC {
 }
 
 function Install-Git {
+    Push-Location ..
     $GitInstallerUrl  = "https://github.com/git-for-windows/git/releases/download/$CurrentGitVersion"
     $GitInstallerUrl += $(if ([Environment]::Is64BitOperatingSystem) { "-64-bit.exe" } else { "-32-bit.exe" })
     $GitInstallerTempFile = "git-installer.exe"
-    $GitInstallerArgs = "/VERYSILENT /SP- /ALLUSERS /NOCANCEL /NORESTART /COMPONENTS=""icons\desktop,ext,"" /DIR=""$CurrentPath\..\Git"""
+    $GitInstallerArgs = "/VERYSILENT /SP- /ALLUSERS /NOCANCEL /NORESTART /COMPONENTS=""icons\desktop,ext,"" /DIR=""$((Get-Location).Path)\Git"""
+    Pop-Location
 
     try {
         Write-Output "Downloading Git for Windows..."
@@ -117,5 +122,4 @@ if ($InstallGit) {
     Install-Git
 }
 
-#Pop-Location
 Write-Host "Installation completed!" -ForegroundColor Green
