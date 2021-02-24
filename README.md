@@ -117,8 +117,8 @@ git version 2.29.2.windows.3
 
 Детальніше пр налаштування VS Code для роботи з різними мовами можна прочитати тут:
 
-- Python: https://code.visualstudio.com/docs/languages/cpp
-- C: https://code.visualstudio.com/docs/languages/python
+- Python: https://code.visualstudio.com/docs/languages/python
+- C: https://code.visualstudio.com/docs/languages/cpp
 
 # Ліцензії
 
