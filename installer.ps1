@@ -6,8 +6,8 @@ param(
 )
 
 
-$CurrentPythonVersion = "3.9.1"
-$CurrentGitVersion    = "v2.29.2.windows.3/Git-2.29.2.3"
+$CurrentPythonVersion = "3.10.7"
+$CurrentGitVersion    = "v2.37.3.windows.1/Git-2.37.3"
 $CurrentMinGWVersion  = "8.1.0"
 $CurrentMinGWRevision = "rt_v6-rev0"
 $MinGWThreadType      = "win32" # "posix"
