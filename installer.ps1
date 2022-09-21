@@ -2,7 +2,8 @@ param(
     [switch] $InstallVSCode = $false,
     [switch] $InstallPython = $false,
     [switch] $InstallGit    = $false,
-    [switch] $InstallGCC    = $false
+    [switch] $InstallGCC    = $false,
+    [switch] $InstallCmdr   = $false
 )
 
 
@@ -11,6 +12,18 @@ $CurrentGitVersion    = "v2.37.3.windows.1/Git-2.37.3"
 $CurrentMinGWVersion  = "8.1.0"
 $CurrentMinGWRevision = "rt_v6-rev0"
 $MinGWThreadType      = "win32" # "posix"
+$CmderVersion         = "1.3.19"
+
+
+function Report-Error ([string]$msg) {
+    Write-Host $msg -BackgroundColor Red
+    Write-Host $_.ScriptStackTrace
+}
+
+function Clean-Up ([string[]]$paths) {
+    Write-Output "Cleaning up..."
+    $paths | % { Remove-Item $_ }
+}
 
 
 function Install-VSCode {
@@ -26,11 +39,9 @@ function Install-VSCode {
         Invoke-WebRequest $VSInstallerURL -OutFile $VSInstallerTempFile
         Write-Output "Starting installation of VS Code..."
         Start-Process $VSInstallerTempFile -Args $VSInstallerArgs -Wait
-        Write-Output "Cleaning up..."
-        Remove-Item $VSInstallerTempFile
+        Clean-Up $VSInstallerTempFile
     } catch {
-        Write-Host "An error occured during VS Code installation:" -BackgroundColor Red
-        Write-Host $_.ScriptStackTrace
+        Report-Error "An error occured during VS Code installation:"
     }
 }
 
@@ -47,11 +58,9 @@ function Install-Python {
         Invoke-WebRequest $PythonInstallerURL -OutFile $PythonInstallerTempFile
         Write-Output "Starting installation of Python..."
         Start-Process $PythonInstallerTempFile -Args $PythonInstallerArgs -Wait
-        Write-Output "Cleaning up..."
-        Remove-Item $PythonInstallerTempFile
+        Clean-Up $PythonInstallerTempFile
     } catch {
-        Write-Host "An error occured during Python installation:" -BackgroundColor Red
-        Write-Host $_.ScriptStackTrace
+        Report-Error "An error occured during Python installation:"
     }
 }
 
@@ -77,11 +86,9 @@ function Install-GCC {
         Push-Location ..
         [Environment]::SetEnvironmentVariable("PATH", "$path;$((Get-Location).Path)\mingw64\bin", [EnvironmentVariableTarget]::Machine)
         Pop-Location
-        Write-Output "Cleaning up..."
-        Remove-Item $GCCInstallerTempFile
+        Clean-Up $GCCInstallerTempFile
     } catch {
-        Write-Host "An error occured during GCC installation:" -BackgroundColor Red
-        Write-Host $_.ScriptStackTrace
+        Report-Error "An error occured during GCC installation:"
     }
 }
 
@@ -98,11 +105,24 @@ function Install-Git {
         Invoke-WebRequest $GitInstallerUrl -OutFile $GitInstallerTempFile
         Write-Output "Starting installing git..."
         Start-Process $GitInstallerTempFile -Args $GitInstallerArgs -Wait
-        Write-Output "Cleaning up..."
-        Remove-Item $GitInstallerTempFile
+        Clean-Up $GitInstallerTempFile
     } catch {
-        Write-Host "An error occured during Git installation:" -BackgroundColor Red
-        Write-Host $_.ScriptStackTrace
+        Report-Error "An error occured during Git installation:"
+    }
+}
+
+function Install-Cmder ([switch]$Mini = $true) {
+    $CmderInstallerUrl  = "https://github.com/cmderdev/cmder/releases/download/v$CmderVersion/"
+    $CmderInstallerUrl += $(if ($Mini) { "cmder_mini.zip" } else { "cmder.7z" })
+    $CmderInstallerTempFile = "cmder.zip"
+
+    try {
+        Write-Output "Downloading Cmder..."
+        Invoke-WebRequest $CmderInstallerUrl -OutFile $CmderInstallerTempFile
+        & ".\7za.exe" x $CmderInstallerTempFile -o"..\cmder"
+        Clean-Up $CmderInstallerTempFile
+    } catch {
+        Report-Error "An error occured during Cmder installation:"
     }
 }
 
@@ -120,6 +140,10 @@ if ($InstallVSCode) {
 
 if ($InstallGit) {
     Install-Git
+}
+
+if ($InstallCmdr) {
+    Install-Cmder
 }
 
 Write-Host "Installation completed!" -ForegroundColor Green
