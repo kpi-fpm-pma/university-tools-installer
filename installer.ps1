@@ -7,12 +7,12 @@ param(
 )
 
 
-$CurrentPythonVersion = "3.10.7"
-$CurrentGitVersion    = "v2.37.3.windows.1/Git-2.37.3"
+$CurrentPythonVersion = "3.11.5"
+$CurrentGitVersion    = "v2.42.0.windows.2/Git-2.42.0.2"
 $CurrentMinGWVersion  = "8.1.0"
 $CurrentMinGWRevision = "rt_v6-rev0"
 $MinGWThreadType      = "win32" # "posix"
-$CmderVersion         = "1.3.19"
+$CmderVersion         = "1.3.24"
 
 
 function Report-Error ([string]$msg) {
