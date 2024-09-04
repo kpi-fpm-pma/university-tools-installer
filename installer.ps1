@@ -7,12 +7,11 @@ param(
 )
 
 
-$CurrentPythonVersion = "3.11.5"
-$CurrentGitVersion    = "v2.42.0.windows.2/Git-2.42.0.2"
-$CurrentMinGWVersion  = "8.1.0"
-$CurrentMinGWRevision = "rt_v6-rev0"
-$MinGWThreadType      = "win32" # "posix"
-$CmderVersion         = "1.3.24"
+$CurrentPythonVersion = "3.12.5"
+$CurrentGitVersion    = "v2.46.0.windows.1/Git-2.46.0"
+$CurrentMinGWVersion  = "14.1.0"
+$CurrentMinGWRevision = "rt_v12-rev0"
+$CmderVersion         = "1.3.25"
 
 
 function Report-Error ([string]$msg) {
@@ -65,15 +64,20 @@ function Install-Python {
 }
 
 function Install-GCC {
-    $GCCInstallerUrl = "https://netix.dl.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win"
     if ([Environment]::Is64BitOperatingSystem) {
-        $GCCInstallerUrl += "64"
         $GCCUrlTarget = "x86_64"
+        $GCCExceptionType = "seh"
     } else {
-        $GCCInstallerUrl += "32"
         $GCCUrlTarget = "i686"
+        $GCCExceptionType = "dwarf"
     }
-    $GCCInstallerUrl += "/Personal%20Builds/mingw-builds/$CurrentMinGWVersion/threads-$MinGWThreadType/seh/$GCCUrlTarget-$CurrentMinGWVersion-release-$MinGWThreadType-seh-$CurrentMinGWRevision.7z"
+
+    $MinGWThreadType = "win32" # "posix"
+    $Runtime = "ucrt" # "msvcrt"
+    if ($MinGWThreadType -eq "mcf") { $Runtime = "mscvrt" }
+
+    $GCCInstallerUrl = "https://github.com/niXman/mingw-builds-binaries/releases/download/$CurrentMinGWVersion-$CurrentMinGWRevision"
+    $GCCInstallerUrl += "/$GCCUrlTarget-$CurrentMinGWVersion-release-$MinGWThreadType-$GCCExceptionType-$CurrentMinGWRevision.7z"
     $GCCInstallerTempFile = "mingw-w64-$CurrentMinGWVersion.7z"
 
     try {
