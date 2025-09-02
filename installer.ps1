@@ -7,10 +7,10 @@ param(
 )
 
 
-$CurrentPythonVersion = "3.12.5"
-$CurrentGitVersion    = "v2.46.0.windows.1/Git-2.46.0"
-$CurrentMinGWVersion  = "14.1.0"
-$CurrentMinGWRevision = "rt_v12-rev0"
+$CurrentPythonVersion = "3.13.7"
+$CurrentGitVersion    = "v2.51.0.windows.1/Git-2.51.0"
+$CurrentMinGWVersion  = "15.2.0"
+$CurrentMinGWRevision = "rt_v13-rev0"
 $CmderVersion         = "1.3.25"
 
 
